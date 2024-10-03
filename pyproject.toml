@@ -1,0 +1,90 @@
+[project]
+name = 'template_python_package_2024'
+license = "Apache-2.0"
+description = "A starter template for Python packages."
+keywords = ["python", "package", "template", "2024"]
+readme = { "file" = "README.md", "content-type" = "text/markdown" }
+authors = [
+    { name = "Mihai Bojin", email = "557584+MihaiBojin@users.noreply.github.com" },
+]
+dynamic = ["dependencies", "optional-dependencies", "version"]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+] # https://pypi.org/classifiers/
+
+[project.urls]
+"Bug reports" = "https://github.com/MihaiBojin/template_python_package_2024/issues/new"
+"Documentation" = "https://github.com/MihaiBojin/template_python_package_2024/blob/main/python/README.md"
+"Source" = "https://github.com/MihaiBojin/template_python_package_2024"
+
+[project.scripts]
+demo-cli = "template_cli_package.demo_cli:main"
+
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+# https://git-scm.com/docs/gitignore#_pattern_format
+exclude = [
+    # keep-sorted start
+    ".devcontainer",
+    ".env",
+    ".github",
+    ".pre-commit-config.yaml",
+    ".pypirc",
+    ".vscode",
+    "Dockerfile",
+    "Makefile",
+    "renovate.json",
+    "scripts/**",
+    "tests/**",
+    # keep-sorted end
+
+    # If you want to include any scripts, list them below
+    # keep-sorted start
+    "!scripts/verify-publish.bash",
+    # keep-sorted end
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/template_package", "src/template_cli_package"]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
+
+[tool.hatch.metadata.hooks.requirements_txt.optional-dependencies]
+cli = ["requirements-cli.txt"]
+dev = ["requirements-dev.txt"]
+
+[tool.hatch.envs.venv]
+type = "virtual"
+
+[tool.hatch.version]
+path = "./VERSION"
+pattern = "(?P<version>.+)"
+
+[tool.mypy]
+# keep-sorted start
+check_untyped_defs = true
+disallow_untyped_calls = true
+namespace_packages = false
+pretty = true
+show_column_numbers = true
+show_error_codes = true
+warn_no_return = false
+warn_unused_ignores = true
+# keep-sorted end
+
+# Add per-package mypi configurations, if needed
+#[[tool.mypy.overrides]]
+#module = '[NAME].*'

@@ -1,0 +1,13 @@
+{
+  "cSpell.words": [
+    "shellcheck",
+  ],
+  "editor.formatOnSave": true,
+  "python.defaultInterpreterPath": "venv/bin/python",
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.envFile": "${workspaceFolder}/.env",
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "files.exclude": {
+    "**/__pycache__": true
+  }
+}
