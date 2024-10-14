@@ -1,8 +1,12 @@
 # DEV requirements
 # keep-sorted start
+boto3==1.35.33
 build ==1.2.2
+mypy-boto3-ecr==1.35.21
 pre-commit ==3.8.0
 pytest ==8.3.2
+pytz==2024.2
+structlog==24.4.0
 toml == 0.10.2
 twine ==5.1.1
 wheel ==0.44.0
