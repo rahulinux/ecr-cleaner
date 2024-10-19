@@ -1,11 +1,11 @@
 [project]
-name = 'template_python_package_2024'
+name = 'ecr_lifecycle'
 license = "Apache-2.0"
-description = "A starter template for Python packages."
-keywords = ["python", "package", "template", "2024"]
+description = "ECR Image Cleanup Tool"
+keywords = ["python", "package", "aws", "ecr", "cleanup"]
 readme = { "file" = "README.md", "content-type" = "text/markdown" }
 authors = [
-    { name = "Mihai Bojin", email = "557584+MihaiBojin@users.noreply.github.com" },
+    { name = "Rahul Patil", email = "4476687+rahulinux@users.noreply.github.com" },
 ]
 dynamic = ["dependencies", "optional-dependencies", "version"]
 requires-python = ">=3.9"
@@ -22,12 +22,12 @@ classifiers = [
 ] # https://pypi.org/classifiers/
 
 [project.urls]
-"Bug reports" = "https://github.com/MihaiBojin/template_python_package_2024/issues/new"
-"Documentation" = "https://github.com/MihaiBojin/template_python_package_2024/blob/main/python/README.md"
-"Source" = "https://github.com/MihaiBojin/template_python_package_2024"
+"Bug reports" = "https://github.com/rahulinux/ecr_lifecycle/issues/new"
+"Documentation" = "https://github.com/rahulinux/ecr_lifecycle/blob/main/python/README.md"
+"Source" = "https://github.com/rahulinux/ecr_lifecycle"
 
 [project.scripts]
-ecr-lifecycle-cli = "ecr_lifecycle_cli.ecr_lifecycle:main"
+ecr-lifecycle-cli = "ecr_lifecycle_cli.cli:main"
 
 [build-system]
 requires = ["hatchling", "hatch-requirements-txt"]
