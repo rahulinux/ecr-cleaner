@@ -22,12 +22,12 @@ classifiers = [
 ] # https://pypi.org/classifiers/
 
 [project.urls]
-"Bug reports" = "https://github.com/rahulinux/ecr_lifecycle/issues/new"
-"Documentation" = "https://github.com/rahulinux/ecr_lifecycle/blob/main/python/README.md"
-"Source" = "https://github.com/rahulinux/ecr_lifecycle"
+"Bug reports" = "https://github.com/rahulinux/ecr-lifecycle/issues/new"
+"Documentation" = "https://github.com/rahulinux/ecr-lifecycle/blob/main/python/README.md"
+"Source" = "https://github.com/rahulinux/ecr-lifecycle"
 
 [project.scripts]
-ecr-lifecycle-cli = "ecr_lifecycle_cli.cli:main"
+ecr_lifecycle = "ecr_lifecycle_cli.cli:main"
 
 [build-system]
 requires = ["hatchling", "hatch-requirements-txt"]
@@ -86,5 +86,6 @@ warn_unused_ignores = true
 # keep-sorted end
 
 # Add per-package mypi configurations, if needed
-#[[tool.mypy.overrides]]
-#module = '[NAME].*'
+[[tool.mypy.overrides]]
+module = 'requests.*'
+ignore_missing_imports = true
