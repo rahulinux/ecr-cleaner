@@ -8,7 +8,6 @@
 - [Manual](#manual)
 - [Building a Docker image](#building-a-docker-image)
 - [Usage](#usage)
-- [License](#license)
 
 
 ## Overview
@@ -79,7 +78,7 @@ task docker-run ARGS="--repositories my-repo:tag-prefix=2,untagged=10 --region u
 ### Installation
 
 ```shell
-pip install ecr-lifecycle-cli
+pip install ecr-lifecycle
 ```
 
 ### Usage
@@ -87,7 +86,7 @@ pip install ecr-lifecycle-cli
 Support following CLI argument
 
 ```shell
-usage: ecr_lifecycle_cli.py [-h] [--config-file CONFIG_FILE] [--repositories REPOSITORIES [REPOSITORIES ...]] [--region REGION] [--batch-size BATCH_SIZE] [--dry-run] [--debug]
+usage: ecr_lifecycle [-h] [--config-file CONFIG_FILE] [--repositories REPOSITORIES [REPOSITORIES ...]] [--region REGION] [--batch-size BATCH_SIZE] [--dry-run] [--debug]
 
 ECR Lifecycle Management CLI
 
