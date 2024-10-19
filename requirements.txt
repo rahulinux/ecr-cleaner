@@ -5,4 +5,5 @@ boto3==1.35.33
 mypy-boto3-ecr==1.35.21
 pytz==2024.2
 structlog==24.4.0
+types-pytz==2024.2.0.20241003
 # keep-sorted end
