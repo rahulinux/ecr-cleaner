@@ -4,4 +4,4 @@ DIR=.
 
 # Create a virtualenv
 cd "$DIR"
-make create-venv
+task create-venv

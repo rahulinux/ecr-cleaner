@@ -1,12 +1,13 @@
 {
-  "cSpell.words": [
-    "shellcheck",
-  ],
+  "cSpell.words": ["shellcheck"],
   "editor.formatOnSave": true,
   "python.defaultInterpreterPath": "venv/bin/python",
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.envFile": "${workspaceFolder}/.env",
   "terminal.integrated.defaultProfile.linux": "zsh",
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
   "files.exclude": {
     "**/__pycache__": true
   }
