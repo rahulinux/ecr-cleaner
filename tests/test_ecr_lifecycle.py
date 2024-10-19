@@ -5,7 +5,7 @@ from unittest import mock
 import boto3
 from moto import mock_aws
 from ecr_lifecycle import Repository
-from ecr_lifecycle_cli.ecr_lifecycle_cli import parse_args, RepositoryConfig
+from ecr_lifecycle_cli import parse_args, RepositoryConfig
 
 
 class TestECRLifecycle(unittest.TestCase):
