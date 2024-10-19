@@ -27,7 +27,7 @@ classifiers = [
 "Source" = "https://github.com/MihaiBojin/template_python_package_2024"
 
 [project.scripts]
-demo-cli = "template_cli_package.demo_cli:main"
+ecr-lifecycle-cli = "ecr_lifecycle_cli.ecr_lifecycle:main"
 
 [build-system]
 requires = ["hatchling", "hatch-requirements-txt"]
@@ -57,7 +57,7 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/template_package", "src/template_cli_package"]
+packages = ["src/ecr_lifecycle", "src/ecr_lifecycle_cli"]
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]

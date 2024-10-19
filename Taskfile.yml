@@ -1,0 +1,109 @@
+# https://taskfile.dev
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+silent: true
+
+tasks:
+  venv:
+    cmds:
+      - echo "source venv/bin/activate"
+
+  clean-venv:
+    cmds:
+      - echo "Deleting virtualenv..."
+      - scripts/delete-venv.bash
+
+  clean:
+    deps: [clean-venv]
+    cmds:
+      - echo Cleaning up builds and caches...
+      - rm -rf {out,dist,build,.mypy_cache,.ruff_cache}
+      - find . -type d -path ./venv -prune -o -name ".pytest_cache" -exec rm -rf {} \;
+      - find . -type d -path ./venv -prune -o -name "__pycache__" -exec rm -rf {} \;
+      - find . -type d -path ./venv -prune -o -name "*.egg-info" -exec rm -rf {} \;
+
+  create-venv:
+    cmds:
+      - echo "Creating virtualenv..."
+      - scripts/create-venv.bash
+
+  install:
+    cmds:
+      - echo "Installing packages in editable mode..."
+      - python -m pip install -e ".[dev]" # toml
+      - scripts/uninstall-package.bash
+      - python -m pip install -e ".[cli,dev]"
+
+  setup:
+    deps: [install]
+    cmds:
+      - echo "Setting up repo for local development..."
+      - pre-commit install --install-hooks
+      - touch .env
+
+  lint:
+    cmds:
+      - echo "Running linters..."
+      - pre-commit run --all-files
+
+  test:
+    cmds:
+      - echo "Running tests..."
+      - pytest tests
+
+  build:
+    cmds:
+      - echo Cleaning up previous builds...
+      - rm -rf dist/
+      - echo "Building..."
+      - python -m build
+
+  build-inspect:
+    deps: [build]
+    vars:
+      PROJECT_NAME:
+        sh: python -c "import toml; print(toml.load('pyproject.toml')['project']['name'])"
+    cmds:
+      - echo
+      - echo "Inspecting wheel..."
+      - wheel2json "dist/{{.PROJECT_NAME}}-$(cat VERSION)-py3-none-any.whl"
+
+      - echo
+      - echo "Inspecting archive..."
+      - tar -tf "dist/{{.PROJECT_NAME}}-$(cat VERSION).tar.gz"
+
+  docker-build:
+    cmds:
+      - echo
+      - echo "Building Dockerfile..."
+      - scripts/build-docker-image.bash
+
+  docker-run:
+    cmds:
+      - echo >&2
+      - echo "Running Docker image..." >&2
+      - scripts/run-docker-image.bash {{.CLI_ARGS}}
+
+  publish-test:
+    deps: [build]
+    silent: false
+    cmds:
+      - echo "Publishing to test repo..."
+      - TWINE_PASSWORD="$TESTPYPI_PASSWORD" twine upload --repository-url https://test.pypi.org/legacy/ dist/\*
+
+  publish-test-verify:
+    cmds:
+      - echo "Verifying test.PyPI package..."
+      - scripts/verify-publish.bash --test
+
+  publish:
+    deps: [build]
+    cmds:
+      - echo "Publishing to PyPI..."
+      - TWINE_PASSWORD="$PYPI_PASSWORD" twine upload dist/\*
+
+  publish-verify:
+    cmds:
+      - echo "Verifying PyPI package..."
+      - scripts/verify-publish.bash --prod

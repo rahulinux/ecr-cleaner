@@ -1,4 +1,4 @@
-name: Python Tests
+name: Test the Docker Image build
 
 on:
   # Trigger on PRs
@@ -11,20 +11,23 @@ on:
       - main
 
 jobs:
-  python-test:
+  build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.13"]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.13"
 
       - name: Install Task
         uses: arduino/setup-task@v1
@@ -32,20 +35,16 @@ jobs:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        working-directory: .
+      - name: Configuring developer tools
         run: |
           task create-venv
           eval "$(task venv)"
+          task setup
 
-      - name: Run linters
-        working-directory: .
+      - name: Building Docker images
+        id: build
         run: |
           eval "$(task venv)"
-          task lint
 
-      - name: Run tests
-        working-directory: .
-        run: |
-          eval "$(task venv)"
-          task test
+          task docker-build -- \
+            --platform linux/arm64,linux/x86_64
