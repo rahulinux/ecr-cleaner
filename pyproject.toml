@@ -27,7 +27,7 @@ classifiers = [
 "Source" = "https://github.com/rahulinux/ecr-cleaner"
 
 [project.scripts]
-ecr_cleaner = "ecr_cleaner_cli.cli:main"
+ecr-cleaner = "ecr_cleaner_cli.cli:main"
 
 [build-system]
 requires = ["hatchling", "hatch-requirements-txt"]

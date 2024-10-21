@@ -4,9 +4,6 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Installation](#installation)
-- [GitHub-based version publishing](#github-based-version-publishing)
-- [Manual](#manual)
-- [Building a Docker image](#building-a-docker-image)
 - [Usage](#usage)
 
 
@@ -22,58 +19,6 @@ The ECR Image Cleanup Tool addresses limitations in Amazon ECR's built-in lifecy
 4. Manages untagged images separately
 5. Provides a dry-run option to preview actions before execution
 
-### GitHub-based version publishing
-
-The simplest way to publish a new version (if you have committer rights) is to tag a commit and push it to the repo:
-
-**At a certain commit, ideally after merging a PR to main**
-
-```shell
-git tag v0.1.x
-git push origin v0.1.x
-```
-
-### Manual
-
-These steps can also be performed locally. For these commands to work, you will need to export two environment variables:
-
-```shell
-export TESTPYPI_PASSWORD=... # token for https://test.pypi.org/legacy/
-export PYPI_PASSWORD=... # token for https://upload.pypi.org/legacy/
-```
-
-First, publish to the test repo and inspect the package:
-
-```shell
-task publish-test
-```
-
-If correct, distribute the wheel to the PyPI index:
-
-Verify the distributed code
-
-```shell
-task publish-verify
-```
-
-## Building a Docker image
-
-Build an image with:
-
-IMPORTANT: This project uses [taskfile.dev](https://taskfile.dev/installation/),
-which you will need to install for running the following commands:
-
-```shell
-task docker-build
-```
-
-and run it with
-
-```shell
-task docker-run
-# or
-task docker-run ARGS="--repositories my-repo:tag-prefix=2,untagged=10 --region us-east-2 --dry-run"
-```
 
 ### Installation
 
