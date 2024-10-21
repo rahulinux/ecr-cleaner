@@ -1,5 +1,5 @@
 [project]
-name = 'ecr_lifecycle'
+name = 'ecr_cleaner'
 license = "Apache-2.0"
 description = "ECR Image Cleanup Tool"
 keywords = ["python", "package", "aws", "ecr", "cleanup"]
@@ -22,12 +22,12 @@ classifiers = [
 ] # https://pypi.org/classifiers/
 
 [project.urls]
-"Bug reports" = "https://github.com/rahulinux/ecr-lifecycle/issues/new"
-"Documentation" = "https://github.com/rahulinux/ecr-lifecycle/blob/main/python/README.md"
-"Source" = "https://github.com/rahulinux/ecr-lifecycle"
+"Bug reports" = "https://github.com/rahulinux/ecr-cleaner/issues/new"
+"Documentation" = "https://github.com/rahulinux/ecr-cleaner/blob/main/python/README.md"
+"Source" = "https://github.com/rahulinux/ecr-cleaner"
 
 [project.scripts]
-ecr_lifecycle = "ecr_lifecycle_cli.cli:main"
+ecr_cleaner = "ecr_cleaner_cli.cli:main"
 
 [build-system]
 requires = ["hatchling", "hatch-requirements-txt"]
@@ -57,7 +57,7 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/ecr_lifecycle", "src/ecr_lifecycle_cli"]
+packages = ["src/ecr_cleaner", "src/ecr_cleaner_cli"]
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]

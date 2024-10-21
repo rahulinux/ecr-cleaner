@@ -1,5 +1,5 @@
 """
-A ECR lifecycle CLI
+A ECR Cleaner CLI
 ==========
 
 Example configuration file:
@@ -22,8 +22,8 @@ from argparse import ArgumentParser, FileType
 from dataclasses import dataclass, astuple
 from typing import Dict, List, Tuple
 
-from ecr_lifecycle import Repository
-from ecr_lifecycle.helpers import get_logger, config_logger
+from ecr_cleaner import Repository
+from ecr_cleaner.helpers import get_logger, config_logger
 
 
 @dataclass
@@ -59,7 +59,7 @@ def parse_repository_config(repo_config: str) -> RepositoryConfig:
 
 
 def parse_args() -> Tuple[List[RepositoryConfig], bool, bool]:
-    parser = ArgumentParser(description="ECR Lifecycle Management CLI")
+    parser = ArgumentParser(description="ECR Cleaner CLI")
     parser.add_argument(
         "--config-file",
         help="Path to configuration file in YAML format. See example in README.md",

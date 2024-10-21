@@ -1,4 +1,4 @@
-from ecr_lifecycle import Repository
+from ecr_cleaner import Repository
 
 
 def main() -> None:
