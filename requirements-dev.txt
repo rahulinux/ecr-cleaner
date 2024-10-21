@@ -1,6 +1,6 @@
 # DEV requirements
 # keep-sorted start
-boto3==1.35.33
+boto3==1.35.44
 build==1.2.2
 mock==5.1.0
 moto==5.0.17
