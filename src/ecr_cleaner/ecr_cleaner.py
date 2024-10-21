@@ -44,7 +44,11 @@ class Repository:
         self.name = name
         self.region = region
         self.batch_size = batch_size
-        self.ecr_client = boto3.client("ecr", region_name=self.region)
+        if not self.region:
+            log.warn("Region is not set, skipping ECR client initialization")
+            self.ecr_client = None
+        else:
+            self.ecr_client = boto3.client("ecr", region_name=self.region)
 
     def _get_images(self, tag_prefix_list: List[str]) -> Images:
         """
