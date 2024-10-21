@@ -40,7 +40,7 @@ class Images(TypedDict):
 
 
 class Repository:
-    def __init__(self, name: str, region: str, batch_size: int) -> None:
+    def __init__(self, name: str, region: str, batch_size: int = 100) -> None:
         self.name = name
         self.region = region
         self.batch_size = batch_size
@@ -75,6 +75,8 @@ class Repository:
         """Fetch all images from the repository using pagination."""
         all_images = []
         next_token = None
+        if not (self.name and self.region):
+            return all_images
         while True:
             try:
                 images = self.ecr_client.describe_images(
