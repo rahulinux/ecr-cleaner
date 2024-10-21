@@ -25,6 +25,10 @@ from typing import Dict, List, Tuple
 from ecr_cleaner import Repository
 from ecr_cleaner.helpers import get_logger, config_logger
 
+log_level = "DEBUG" if "--debug" in sys.argv else os.environ.get("LOG_LEVEL", "INFO")
+config_logger(log_level)
+log = get_logger()
+
 
 @dataclass
 class RepositoryConfig:
@@ -94,9 +98,9 @@ def parse_args() -> Tuple[List[RepositoryConfig], bool, bool]:
     )
     args = parser.parse_args()
 
-    if not (args.config_file or args.repositories):
+    if not (args.config_file or (args.repositories and args.region)):
         parser.print_help()
-        return
+        sys.exit(1)
 
     dry_run = args.dry_run
     batch_size = args.batch_size
@@ -129,9 +133,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    log_level = (
-        "DEBUG" if "--debug" in sys.argv else os.environ.get("LOG_LEVEL", "INFO")
-    )
-    config_logger(log_level)
-    log = get_logger()
     main()
