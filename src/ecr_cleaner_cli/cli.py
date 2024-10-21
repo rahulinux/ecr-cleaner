@@ -98,9 +98,9 @@ def parse_args() -> Tuple[List[RepositoryConfig], bool, bool]:
     )
     args = parser.parse_args()
 
-    if not (args.config_file or args.repositories):
+    if not (args.config_file or (args.repositories and args.region)):
         parser.print_help()
-        return
+        sys.exit(1)
 
     dry_run = args.dry_run
     batch_size = args.batch_size
