@@ -1,5 +1,5 @@
 """
-ECR Lifecycle
+ECR Cleaner
 ====
 
 A module for managing Amazon ECR (Elastic Container Registry) lifecycles.

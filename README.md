@@ -78,7 +78,7 @@ task docker-run ARGS="--repositories my-repo:tag-prefix=2,untagged=10 --region u
 ### Installation
 
 ```shell
-pip install ecr-lifecycle
+pip install ecr-cleaner
 ```
 
 ### Usage
@@ -86,9 +86,9 @@ pip install ecr-lifecycle
 Support following CLI argument
 
 ```shell
-usage: ecr_lifecycle [-h] [--config-file CONFIG_FILE] [--repositories REPOSITORIES [REPOSITORIES ...]] [--region REGION] [--batch-size BATCH_SIZE] [--dry-run] [--debug]
+usage: ecr_cleaner [-h] [--config-file CONFIG_FILE] [--repositories REPOSITORIES [REPOSITORIES ...]] [--region REGION] [--batch-size BATCH_SIZE] [--dry-run] [--debug]
 
-ECR Lifecycle Management CLI
+ECR Cleaner CLI
 
 options:
   -h, --help            show this help message and exit

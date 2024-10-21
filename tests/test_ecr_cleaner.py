@@ -4,11 +4,11 @@ import unittest
 from unittest import mock
 import boto3
 from moto import mock_aws
-from ecr_lifecycle import Repository
-from ecr_lifecycle_cli import parse_args, RepositoryConfig
+from ecr_cleaner import Repository
+from ecr_cleaner_cli import parse_args, RepositoryConfig
 
 
-class TestECRLifecycle(unittest.TestCase):
+class TestECRCleaner(unittest.TestCase):
     REPOSITORY_NAME = "test-image"
     REGION = "us-east-1"
     BATCH_SIZE = 1
@@ -64,8 +64,8 @@ class TestECRLifecycle(unittest.TestCase):
                     imageDigest=image_digest,
                 )
 
-    def test_ecr_lifecycle_management(self):
-        """Test the ECR lifecycle management functionality."""
+    def test_ecr_cleaner_management(self):
+        """Test the ECR Cleaner functionality."""
         policy = {"latest": 1, "untagged": 2}
         repo = Repository(
             name=self.REPOSITORY_NAME, batch_size=self.BATCH_SIZE, region=self.REGION

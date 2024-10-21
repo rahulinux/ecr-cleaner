@@ -17,4 +17,4 @@ COPY dist /app/dist
 
 RUN pip install --no-cache-dir "/app/dist/${PROJECT_NAME}-${VERSION}-py3-none-any.whl[cli]"
 
-ENTRYPOINT ["python", "/usr/local/bin/ecr-lifecycle"]
+ENTRYPOINT ["python", "/usr/local/bin/ecr-cleaner"]
