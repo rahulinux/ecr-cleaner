@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "ecr-cleaner.fullname" . }}-test-connection"
+  labels:
+    {{- include "ecr-cleaner.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: test-dry-run
+      image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+      command: ["/usr/local/bin/ecr-cleaner"]
+      args:
+        - --dry-run --debug --config-file "/etc/ecr_clean.yaml"
+  restartPolicy: Never

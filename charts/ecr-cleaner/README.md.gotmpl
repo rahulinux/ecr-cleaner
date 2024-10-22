@@ -1,0 +1,34 @@
+{{ template "chart.header" . }}
+
+## Overview
+
+{{ template "chart.description" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+## Features
+
+1. Supports multi-architecture image cleanup
+2. Allows fine-grained control over image retention
+3. Can keep a specified number of recent images for each tag
+4. Manages untagged images separately
+5. Provides a dry-run option to preview actions before execution
+
+## Prerequisites
+
+- Kubernetes 1.25+
+- Helm 3.16.2+
+
+## Installing the Chart
+
+Install from this repository
+
+```bash
+helm repo add ecr-cleaner https://rahulinux.github.io/charts
+helm install --namespace ecr-cleaner --create-namespace ecr-cleaner ecr-cleaner/{{ template "chart.name" . }}
+```
+
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}
