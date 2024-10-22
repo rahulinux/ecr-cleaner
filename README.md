@@ -1,5 +1,10 @@
 ## ECR Image Cleanup Tool
 
+![Build Status](https://github.com/rahulinux/ecr-cleaner/actions/workflows/python-tests.yml/badge.svg)
+[![PyPI version](https://badge.fury.io/py/ecr-cleaner.svg)](https://badge.fury.io/py/ecr-cleaner)
+[![Python Versions](https://img.shields.io/pypi/pyversions/ecr-cleaner.svg)](https://pypi.org/project/ecr-cleaner/)
+[![License](https://img.shields.io/github/license/rahulinux/ecr-cleaner.svg)](LICENSE)
+
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
