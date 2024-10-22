@@ -1,3 +1,4 @@
+import platform
 import argparse
 import json
 import unittest
@@ -7,9 +8,11 @@ from moto import mock_aws
 from ecr_cleaner import Repository
 from ecr_cleaner_cli import parse_args, RepositoryConfig
 
+py_version = platform.python_version().replace(".", "-")
+
 
 class TestECRCleaner(unittest.TestCase):
-    REPOSITORY_NAME = "test-image"
+    REPOSITORY_NAME = f"test-image-{py_version}"
     REGION = "us-east-1"
     BATCH_SIZE = 1
 
