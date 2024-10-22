@@ -40,6 +40,8 @@ jobs:
       uses: helm/chart-releaser-action@v1.6.0
       env:
         CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        skip_existing: true
 
   update-chart-readme:
     runs-on: ubuntu-latest
@@ -59,8 +61,9 @@ jobs:
     - name: Update chart README
       run: |
         git checkout gh-pages
-        git checkout  main --  charts/ecr-cleaner/README.md
-        mv charts/ecr-cleaner/README.md .
+        git checkout  $GITHUB_REF_NAME --  charts/ecr-cleaner/README.md
+        mv -f charts/ecr-cleaner/README.md .
+        rm -rf charts
         git add README.md
         git commit -m "[automated commit] Update chart README for release $GITHUB_REF_NAME"
         # display last commit
