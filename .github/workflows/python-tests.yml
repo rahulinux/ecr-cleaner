@@ -1,51 +1,52 @@
+---
 name: Python Tests
 
 on:
   # Trigger on PRs
   pull_request:
     branches:
-      - main
+    - main
   # And on pushes to main
   push:
     branches:
-      - main
+    - main
 
 jobs:
   python-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      - name: Install Task
-        uses: arduino/setup-task@v1
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install Task
+      uses: arduino/setup-task@v1
+      with:
+        version: 3.x
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        working-directory: .
-        run: |
-          task create-venv
-          eval "$(task venv)"
+    - name: Install dependencies
+      working-directory: .
+      run: |
+        task create-venv
+        eval "$(task venv)"
 
-      - name: Run linters
-        working-directory: .
-        run: |
-          eval "$(task venv)"
-          task lint
+    - name: Run linters
+      working-directory: .
+      run: |
+        eval "$(task venv)"
+        task lint
 
-      - name: Run tests
-        working-directory: .
-        run: |
-          eval "$(task venv)"
-          task test
+    - name: Run tests
+      working-directory: .
+      run: |
+        eval "$(task venv)"
+        task test

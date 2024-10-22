@@ -1,10 +1,11 @@
+---
 name: Build and Publish Docker Image
 
 on:
   # Trigger only on v0.* tag pushes
   push:
     tags:
-      - "v0.*"
+    - v0.*
 
 jobs:
   build-and-push:
@@ -18,107 +19,107 @@ jobs:
       attestations: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-      - name: Install Task
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.39.2
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install Task
+      uses: arduino/setup-task@v2
+      with:
+        version: 3.39.2
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configuring developer tools
-        run: |
-          task create-venv
-          eval "$(task venv)"
-          task install
+    - name: Configuring developer tools
+      run: |
+        task create-venv
+        eval "$(task venv)"
+        task install
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          logout: true
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        logout: true
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          registry: docker.io
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        registry: docker.io
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Generate build tags
-        run: |
-          eval "$(task venv)"
-          source "scripts/functions.bash"
+    - name: Generate build tags
+      run: |
+        eval "$(task venv)"
+        source "scripts/functions.bash"
 
-          OWNER_REPO="$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" # format: org/repo
-          echo "OWNER_REPO=$OWNER_REPO" >> "$GITHUB_ENV"
+        OWNER_REPO="$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" # format: org/repo
+        echo "OWNER_REPO=$OWNER_REPO" >> "$GITHUB_ENV"
 
-          REPO_NAME=$(echo "${{ github.repository }}" | cut -d '/' -f 2)
-          echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
+        REPO_NAME=$(echo "${{ github.repository }}" | cut -d '/' -f 2)
+        echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
 
-          scripts/detect-and-set-tag-version.bash
-          echo "VERSION=$(cat ${{ github.workspace }}/VERSION)" >> "$GITHUB_ENV"
+        scripts/detect-and-set-tag-version.bash
+        echo "VERSION=$(cat ${{ github.workspace }}/VERSION)" >> "$GITHUB_ENV"
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          make_latest: true
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        generate_release_notes: true
+        make_latest: true
 
-      - name: Build Docker multiplatform image
-        id: build
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/amd64,linux/arm64
-          push: true
-          labels: |
-            org.opencontainers.image.title=Cloudflare Web Application Firewall log downloader
-            org.opencontainers.image.description="Cloudflare Web Application Firewall log downloader for a specified zone and time range"
-            org.opencontainers.image.url=https://github.com/${{ github.repository }}
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.version=${{ env.VERSION }}
-            org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.licenses=Apache-2.0
-          tags: |
-            ghcr.io/${{ env.OWNER_REPO }}:${{ github.sha }}
-            ghcr.io/${{ env.OWNER_REPO }}:${{ env.VERSION }}
-            ghcr.io/${{ env.OWNER_REPO }}:latest
-            docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ github.sha }}
-            docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ env.VERSION }}
-            docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:latest
+    - name: Build Docker multiplatform image
+      id: build
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64,linux/arm64
+        push: true
+        labels: |
+          org.opencontainers.image.title=Cloudflare Web Application Firewall log downloader
+          org.opencontainers.image.description="Cloudflare Web Application Firewall log downloader for a specified zone and time range"
+          org.opencontainers.image.url=https://github.com/${{ github.repository }}
+          org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          org.opencontainers.image.version=${{ env.VERSION }}
+          org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
+          org.opencontainers.image.revision=${{ github.sha }}
+          org.opencontainers.image.licenses=Apache-2.0
+        tags: |
+          ghcr.io/${{ env.OWNER_REPO }}:${{ github.sha }}
+          ghcr.io/${{ env.OWNER_REPO }}:${{ env.VERSION }}
+          ghcr.io/${{ env.OWNER_REPO }}:latest
+          docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ github.sha }}
+          docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ env.VERSION }}
+          docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:latest
 
-      - name: Generate SBOM (GHCR)
-        uses: anchore/sbom-action@v0
-        with:
-          image: ghcr.io/${{ env.OWNER_REPO }}:${{ env.VERSION }}
-          artifact-name: sbom_ghcr_${{ env.REPO_NAME }}_${{ env.VERSION }}.spdx.json
+    - name: Generate SBOM (GHCR)
+      uses: anchore/sbom-action@v0
+      with:
+        image: ghcr.io/${{ env.OWNER_REPO }}:${{ env.VERSION }}
+        artifact-name: sbom_ghcr_${{ env.REPO_NAME }}_${{ env.VERSION }}.spdx.json
 
-      - name: Generate SBOM (Docker Hub)
-        uses: anchore/sbom-action@v0
-        with:
-          image: docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ env.VERSION }}
-          artifact-name: sbom_docker_${{ env.REPO_NAME }}_${{ env.VERSION }}.spdx.json
+    - name: Generate SBOM (Docker Hub)
+      uses: anchore/sbom-action@v0
+      with:
+        image: docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ env.VERSION }}
+        artifact-name: sbom_docker_${{ env.REPO_NAME }}_${{ env.VERSION }}.spdx.json
 
-      - name: Generate artifact attestation for GitHub Container Registry
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ghcr.io/${{ env.OWNER_REPO }}
-          subject-digest: ${{ steps.build.outputs.digest }}
-          push-to-registry: true
+    - name: Generate artifact attestation for GitHub Container Registry
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-name: ghcr.io/${{ env.OWNER_REPO }}
+        subject-digest: ${{ steps.build.outputs.digest }}
+        push-to-registry: true
 
-      - name: Generate artifact attestation for Docker Hub
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}
-          subject-digest: ${{ steps.build.outputs.digest }}
-          push-to-registry: true
+    - name: Generate artifact attestation for Docker Hub
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-name: docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}
+        subject-digest: ${{ steps.build.outputs.digest }}
+        push-to-registry: true
