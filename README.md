@@ -1,5 +1,10 @@
 ## ECR Image Cleanup Tool
 
+![Build Status](https://github.com/rahulinux/ecr-cleaner/actions/workflows/python-tests.yml/badge.svg)
+[![PyPI version](https://badge.fury.io/py/ecr-cleaner.svg)](https://badge.fury.io/py/ecr-cleaner)
+[![Python Versions](https://img.shields.io/pypi/pyversions/ecr-cleaner.svg)](https://pypi.org/project/ecr-cleaner/)
+[![License](https://img.shields.io/github/license/rahulinux/ecr-cleaner.svg)](LICENSE)
+
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
@@ -49,3 +54,45 @@ options:
 ```
 
 Clean-up will keep most recent number of images based on inputs and it will delete remaining matching tagPrefix
+
+
+## Helm chart
+
+## Prerequisites
+
+AWS IAM role permission to manage ECR repositories
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ecr-cleaner",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:BatchDeleteImage",
+        "ecr:BatchGetImage",
+        "ecr:DescribeImages",
+        "ecr:ListImages",
+        "ecr:DescribeRepositories"
+      ]
+    }
+  ]
+}
+```
+
+## Installation
+
+[Helm Readme](./charts/ecr-cleaner/README.md)
+
+## Service account annotation
+
+If you are using IRSA then you can use following in helm values
+
+```yaml
+serviceAccount:
+  create: true
+  name: ecr-cleaner
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/my-role
+```

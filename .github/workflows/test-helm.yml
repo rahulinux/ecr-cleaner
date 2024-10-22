@@ -1,0 +1,26 @@
+---
+name: Test the Helm chart
+
+on:
+  # Trigger on PRs
+  pull_request:
+    branches:
+    - main
+  # And on pushes to main
+  push:
+    branches:
+    - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+
+    - name: Helm lint
+      run: helm lint charts/ecr-cleaner

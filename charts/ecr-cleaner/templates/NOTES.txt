@@ -1,0 +1,2 @@
+To check the logs for the cronjob deployed by this Helm chart, you can use the following command:
+kubectl logs -n {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "ecr-cleaner.name" . }}"
