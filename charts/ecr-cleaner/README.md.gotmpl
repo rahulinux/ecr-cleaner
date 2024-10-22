@@ -24,7 +24,7 @@
 Install from this repository
 
 ```bash
-helm repo add ecr-cleaner https://rahulinux.github.io/charts
+helm repo add ecr-cleaner https://rahulinux.github.io/ecr-cleaner/
 helm install --namespace ecr-cleaner --create-namespace ecr-cleaner ecr-cleaner/{{ template "chart.name" . }}
 ```
 

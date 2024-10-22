@@ -24,7 +24,7 @@ The ECR Image Cleanup Tool addresses limitations in Amazon ECR's built-in lifecy
 Install from this repository
 
 ```bash
-helm repo add ecr-cleaner https://rahulinux.github.io/charts
+helm repo add ecr-cleaner https://rahulinux.github.io/ecr-cleaner/
 helm install --namespace ecr-cleaner --create-namespace ecr-cleaner ecr-cleaner/ecr-cleaner
 ```
 
@@ -33,6 +33,10 @@ helm install --namespace ecr-cleaner --create-namespace ecr-cleaner ecr-cleaner/
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
+| cmdFlags[0] | string | `"--dry-run"` |  |
+| cmdFlags[1] | string | `"--debug"` |  |
+| cmdFlags[2] | string | `"--config-file"` |  |
+| cmdFlags[3] | string | `"/etc/config.yaml"` |  |
 | concurrencyPolicy | string | `"Forbid"` | Do not run concurrently |
 | ecrCleaner | object | `{"repositories":[]}` | Configuration for ECR cleaner job |
 | failedJobsHistoryLimit | int | `5` |  |
