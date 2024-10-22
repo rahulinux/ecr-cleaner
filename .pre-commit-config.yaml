@@ -1,45 +1,59 @@
+---
 # .pre-commit-config.yaml
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
-    hooks:
-      - id: check-added-large-files
-        args: ["--maxkb=1024"]
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.4.0
+  hooks:
+  - id: check-added-large-files
+    args: [--maxkb=1024]
       # keep-sorted start
-      - id: check-ast
-      - id: check-docstring-first
-      - id: check-yaml
-      - id: debug-statements
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
+  - id: check-ast
+  - id: check-docstring-first
+  - id: debug-statements
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
       # keep-sorted end
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.4
-    hooks:
-      - id: ruff
-        args: ["--fix"]
-      - id: ruff-format
+- repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+  rev: 0.2.3
+  hooks:
+  - id: yamlfmt
+    args: [--mapping, '2', --sequence, '2', --offset, '0']
+    exclude: ^charts/
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
-    hooks:
-      - id: mypy
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.4.4
+  hooks:
+  - id: ruff
+    args: [--fix]
+  - id: ruff-format
 
-  - repo: https://gitlab.com/bmares/check-json5
-    rev: v1.0.0
-    hooks:
-      - id: check-json5
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.10.0
+  hooks:
+  - id: mypy
 
-  - repo: https://github.com/google/keep-sorted
-    rev: v0.4.0
-    hooks:
-      - id: keep-sorted
+- repo: https://gitlab.com/bmares/check-json5
+  rev: v1.0.0
+  hooks:
+  - id: check-json5
 
-  - repo: local
-    hooks:
-      - id: pre-push-hook
-        name: Pre-push hook
-        entry: scripts/pre-push.bash
-        language: script
-        stages: [push]
+- repo: https://github.com/google/keep-sorted
+  rev: v0.4.0
+  hooks:
+  - id: keep-sorted
+
+- repo: https://github.com/melmorabity/helm-kubeconform
+  rev: 0.6.7.1
+  hooks:
+  - id: helm-kubeconform
+    args:
+    - charts/ecr-cleaner
+
+- repo: local
+  hooks:
+  - id: pre-push-hook
+    name: Pre-push hook
+    entry: scripts/pre-push.bash
+    language: script
+    stages: [push]
