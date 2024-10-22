@@ -12,7 +12,7 @@ on:
     - main
 
 jobs:
-  build-and-test:
+  test-helm-chart:
     runs-on: ubuntu-latest
 
     steps:
