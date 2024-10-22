@@ -54,9 +54,19 @@ jobs:
     permissions:
       contents: write
     steps:
-    - uses: actions/checkout@v3
+
+    - name: Checkout docs branch
+      uses: actions/checkout@v3
       with:
-        fetch-depth: 0
+        ref: gh-pages
+
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+
+    - name: Download helm chart
+      run: |
+        helm repo add ecr-cleaner https://rahulinux.github.io/ecr-cleaner/
+        helm pull ecr-cleaner/ecr-cleaner --version $GITHUB_REF_NAME
 
     - name: Configure Git
       run: |
@@ -65,14 +75,13 @@ jobs:
 
     - name: Update chart README
       run: |
-        git checkout gh-pages
-        git checkout  $GITHUB_REF_NAME --  charts/ecr-cleaner/README.md
-        mv -f charts/ecr-cleaner/README.md .
-        rm -rf charts
+        tar -zxvf ecr-cleaner-*.tgz  ecr-cleaner/README.md
+        rm -rf ecr-cleaner-*.tgz
+        mv -v ecr-cleaner/README.md README.md
         git add README.md
         git commit -m "[automated commit] Update chart README for release $GITHUB_REF_NAME"
         # display last commit
         git log -1 --stat -p
-        git push gh-pages
+        git push origin gh-pages
       env:
         CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
