@@ -108,3 +108,12 @@ tasks:
     cmds:
     - echo "Verifying PyPI package..."
     - scripts/verify-publish.bash --prod
+
+  helm-lint:
+    cmds:
+    - helm lint charts/ecr-cleaner
+
+  helm-template:
+    desc: Template the Helm chart
+    cmds:
+    - helm template my-release charts/ecr-cleaner
