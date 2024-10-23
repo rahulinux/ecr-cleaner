@@ -7,10 +7,27 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+  serviceAccountName: {{ include "ecr-cleaner.serviceAccountName" . }}
   containers:
     - name: test-dry-run
       image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
       command: ["/usr/local/bin/ecr-cleaner"]
       args:
-        - --dry-run --debug --config-file "/etc/ecr_clean.yaml"
+      {{- if not (has "--dry-run" .Values.cmdFlags) }}
+      - --dry-run
+      {{- end }}
+      {{- if not (has "--debug" .Values.cmdFlags) }}
+      - --debug
+      {{- end }}
+      {{- range .Values.cmdFlags }}
+      - {{ . }}
+      {{- end }}
+      {{- with .Values.volumeMounts }}
+      volumeMounts:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
   restartPolicy: Never
+  {{- with .Values.volumes }}
+  volumes:
+    {{- toYaml . | nindent 2 }}
+  {{- end }}

@@ -157,6 +157,12 @@ class Repository:
 
         if delete_count == 0:
             log.warn("Invalid policy, Skipping tag", tag=tag, repository=self.name)
+            log.warn(
+                "Keep most recent count should be greater than 0",
+                tag=tag,
+                repository=self.name,
+                keep_count=keep_count,
+            )
             return
 
         images_to_delete = tagged_images[tag][-delete_count:]
