@@ -4,7 +4,7 @@
 
 The ECR Image Cleanup Tool addresses limitations in Amazon ECR's built-in lifecycle policies, particularly for multi-architecture images. It helps prevent repositories from hitting the 10,000 image hard limit imposed by ECR by providing more flexible and architecture-aware cleanup options.
 
-![Version: v0.1.7](https://img.shields.io/badge/Version-v0.1.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.7](https://img.shields.io/badge/AppVersion-v0.1.7-informational?style=flat-square)
+![Version: v0.1.8](https://img.shields.io/badge/Version-v0.1.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.8](https://img.shields.io/badge/AppVersion-v0.1.8-informational?style=flat-square)
 
 ## Features
 
@@ -26,6 +26,29 @@ Install from this repository
 ```bash
 helm repo add ecr-cleaner https://rahulinux.github.io/ecr-cleaner/
 helm install --namespace ecr-cleaner --create-namespace ecr-cleaner ecr-cleaner/ecr-cleaner
+```
+
+## Example values
+
+```yaml
+# run every midnight
+schedule: "0 0 * * *"
+ecrCleaner:
+  region: eu-central-1
+  repositories:
+    # keep most recent three images with tag prefix: pinned*
+    # keep most recent three untagged images and delete remainings
+    - rahul-test:pinned=3,untagged=3
+serviceAccount:
+  create: true
+  name: ecr-cleaner
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::XXXX:role/ecr-cleaner
+cmdFlags:
+  - --dry-run
+  - --debug
+  - --config-file
+  - /etc/config.yaml
 ```
 
 ## Values
