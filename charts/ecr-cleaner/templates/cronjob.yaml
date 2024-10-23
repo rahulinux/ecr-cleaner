@@ -10,6 +10,9 @@ spec:
     spec:
       concurrencyPolicy: {{ .Values.concurrencyPolicy }}
       failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+      restartPolicy: {{ .Values.restartPolicy }}
+      backoffLimit: {{ .Values.backoffLimit }}
+      timeZone: {{ .Values.timeZone }}
       template:
         metadata:
           labels:
