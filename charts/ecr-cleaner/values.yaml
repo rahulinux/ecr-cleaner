@@ -16,7 +16,9 @@ schedule: "0 0 * * *"
 # -- Do not run concurrently
 concurrencyPolicy: Forbid
 failedJobsHistoryLimit: 5
-restartPolicy: OnFailure
+restartPolicy: Never
+backoffLimit: 0
+timeZone: "Etc/UTC"
 
 # -- Configuration for ECR cleaner job
 ecrCleaner:
