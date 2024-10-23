@@ -13,6 +13,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.VERSION }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -24,14 +26,36 @@ jobs:
         git config user.name "$GITHUB_ACTOR"
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+    - name: Install Task
+      uses: arduino/setup-task@v2
+      with:
+        version: 3.39.2
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Configuring developer tools
+      run: |
+        task create-venv
+        eval "$(task venv)"
+        task install
+
+    - name: Generate build tags
+      id: get-version
+      run: |
+        eval "$(task venv)"
+        source "scripts/functions.bash"
+
+        scripts/detect-and-set-tag-version.bash
+        echo "VERSION=$(cat ${{ github.workspace }}/VERSION)" >> "$GITHUB_ENV"
+        echo "VERSION=$(cat ${{ github.workspace }}/VERSION)" >> "$GITHUB_OUTPUT"
+
     - name: Install Helm
       uses: azure/setup-helm@v4
 
     - name: Set appVersion on chart.yaml
       run: |
-        echo "Updating chart version to $GITHUB_REF_NAME"
-        sed -i.bak "s/version:.*$/version: $GITHUB_REF_NAME/" charts/ecr-cleaner/Chart.yaml
-        sed -i.bak "s/^appVersion:.*$/appVersion: $GITHUB_REF_NAME/" charts/ecr-cleaner/Chart.yaml
+        echo "Updating chart version to ${{ env.VERSION }}"
+        sed -i.bak "s/version:.*$/version: ${{ env.VERSION }}/" charts/ecr-cleaner/Chart.yaml
+        sed -i.bak "s/^appVersion:.*$/appVersion: ${{ env.VERSION }}/" charts/ecr-cleaner/Chart.yaml
 
     - name: Run helm-docs
       uses: losisin/helm-docs-github-action@v1
@@ -54,6 +78,9 @@ jobs:
     permissions:
       contents: write
     steps:
+    - name: set version
+      run: |
+        echo "VERSION=${{ needs.release-helm-chart.outputs.version }}" >> "$GITHUB_ENV"
 
     - name: Wait for index build
       run: sleep 60
@@ -69,7 +96,7 @@ jobs:
     - name: Download helm chart
       run: |
         helm repo add ecr-cleaner https://rahulinux.github.io/ecr-cleaner/
-        helm pull ecr-cleaner/ecr-cleaner --version $GITHUB_REF_NAME
+        helm pull ecr-cleaner/ecr-cleaner --version ${{ env.VERSION }}
 
     - name: Configure Git
       run: |
@@ -82,7 +109,7 @@ jobs:
         rm -rf ecr-cleaner-*.tgz
         mv -v ecr-cleaner/README.md README.md
         git add README.md
-        git commit -m "[automated commit] Update chart README for release $GITHUB_REF_NAME"
+        git commit -m "[automated commit] Update chart README for release  ${{ env.VERSION }}"
         # display last commit
         git log -1 --stat -p
         git push origin gh-pages
