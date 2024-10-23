@@ -44,8 +44,8 @@ spec:
               image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
               command: ["/usr/local/bin/ecr-cleaner"]
               args:
-              {{- with .Values.cmdFlags }}
-              {{- toYaml . | nindent 16 }}
+              {{- range .Values.cmdFlags }}
+              - {{ . }}
               {{- end }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               {{- with .Values.volumeMounts }}
