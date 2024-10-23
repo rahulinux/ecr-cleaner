@@ -105,8 +105,7 @@ def parse_args() -> Tuple[List[RepositoryConfig], bool, bool]:
     dry_run = args.dry_run
     batch_size = args.batch_size
     if args.config_file:
-        with open(args.config_file, "r") as f:
-            config = yaml.safe_load(f)
+        config = yaml.safe_load(args.config_file)
         repositories = config.get("repositories", [])
         region = config.get("region")
     else:
