@@ -55,6 +55,13 @@ options:
 
 Clean-up will keep most recent number of images based on inputs and it will delete remaining matching tagPrefix
 
+## Config example
+
+```yaml
+region: eu-central-1
+repositories:
+  - rahul-test:pinned=1,untagged=3
+```
 
 ## Helm chart
 
@@ -84,15 +91,3 @@ AWS IAM role permission to manage ECR repositories
 ## Installation
 
 [Helm Readme](./charts/ecr-cleaner/README.md)
-
-## Service account annotation
-
-If you are using IRSA then you can use following in helm values
-
-```yaml
-serviceAccount:
-  create: true
-  name: ecr-cleaner
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/my-role
-```

@@ -55,6 +55,9 @@ jobs:
       contents: write
     steps:
 
+    - name: Wait for index build
+      run: sleep 60
+
     - name: Checkout docs branch
       uses: actions/checkout@v3
       with:
