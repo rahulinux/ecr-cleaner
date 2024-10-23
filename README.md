@@ -4,7 +4,7 @@
 
 The ECR Image Cleanup Tool addresses limitations in Amazon ECR's built-in lifecycle policies, particularly for multi-architecture images. It helps prevent repositories from hitting the 10,000 image hard limit imposed by ECR by providing more flexible and architecture-aware cleanup options.
 
-![Version: v0.1.9](https://img.shields.io/badge/Version-v0.1.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.9](https://img.shields.io/badge/AppVersion-v0.1.9-informational?style=flat-square)
+![Version: 0.1.10](https://img.shields.io/badge/Version-0.1.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.10](https://img.shields.io/badge/AppVersion-0.1.10-informational?style=flat-square)
 
 ## Features
 
@@ -48,7 +48,7 @@ cmdFlags:
   - --dry-run
   - --debug
   - --config-file
-  - /etc/config.yaml
+  - /etc/ecr-cleaner/config.yaml
 ```
 
 ## Values
@@ -60,7 +60,7 @@ cmdFlags:
 | cmdFlags[0] | string | `"--dry-run"` |  |
 | cmdFlags[1] | string | `"--debug"` |  |
 | cmdFlags[2] | string | `"--config-file"` |  |
-| cmdFlags[3] | string | `"/etc/config.yaml"` |  |
+| cmdFlags[3] | string | `"/etc/ecr-cleaner/config.yaml"` |  |
 | concurrencyPolicy | string | `"Forbid"` | Do not run concurrently |
 | ecrCleaner | object | `{"repositories":[]}` | Configuration for ECR cleaner job |
 | failedJobsHistoryLimit | int | `5` |  |
@@ -82,12 +82,14 @@ cmdFlags:
 | securityContext | object | `{}` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.automount | bool | `true` |  |
-| serviceAccount.create | bool | `false` |  |
-| serviceAccount.name | string | `""` |  |
+| serviceAccount.create | bool | `true` |  |
+| serviceAccount.name | string | `"ecr-cleaner"` |  |
 | timeZone | string | `"Etc/UTC"` |  |
 | tolerations | list | `[]` |  |
-| volumeMounts[0].mountPath | string | `"/etc/config.yaml"` |  |
+| volumeMounts[0].mountPath | string | `"/etc/ecr-cleaner"` |  |
 | volumeMounts[0].name | string | `"config"` |  |
+| volumes[0].configMap.items[0].key | string | `"config.yaml"` |  |
+| volumes[0].configMap.items[0].path | string | `"config.yaml"` |  |
 | volumes[0].configMap.name | string | `"ecr-cleaner-config"` |  |
 | volumes[0].name | string | `"config"` |  |
 
