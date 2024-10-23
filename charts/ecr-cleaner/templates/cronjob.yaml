@@ -10,9 +10,10 @@ spec:
     spec:
       concurrencyPolicy: {{ .Values.concurrencyPolicy }}
       failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
-      restartPolicy: {{ .Values.restartPolicy }}
       backoffLimit: {{ .Values.backoffLimit }}
-      timeZone: {{ .Values.timeZone }}
+      {{- with .Values.timeZone }}
+      timeZone: {{ . }}
+      {{- end }}
       template:
         metadata:
           labels:
@@ -51,6 +52,9 @@ spec:
               {{- with .Values.resources }}
               resources:
                 {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with .Values.restartPolicy }}
+              restartPolicy: {{ . }}
               {{- end }}
           {{- with .Values.volumes }}
           volumes:
