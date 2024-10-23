@@ -6,14 +6,14 @@ metadata:
     {{- include "ecr-cleaner.labels" . | nindent 4 }}
 spec:
   schedule: {{ .Values.schedule | quote }}
+  concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  {{- with .Values.timeZone }}
+  timeZone: {{ . }}
+  {{- end }}
   jobTemplate:
     spec:
-      concurrencyPolicy: {{ .Values.concurrencyPolicy }}
-      failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
       backoffLimit: {{ .Values.backoffLimit }}
-      {{- with .Values.timeZone }}
-      timeZone: {{ . }}
-      {{- end }}
       template:
         metadata:
           labels:
@@ -31,6 +31,9 @@ spec:
           {{- with .Values.podSecurityContext }}
           securityContext:
             {{- toYaml . | nindent 14 }}
+          {{- end }}
+          {{- with .Values.restartPolicy }}
+          restartPolicy: {{ . }}
           {{- end }}
           containers:
             - name: {{ .Chart.Name }}
@@ -52,9 +55,6 @@ spec:
               {{- with .Values.resources }}
               resources:
                 {{- toYaml . | nindent 16 }}
-              {{- end }}
-              {{- with .Values.restartPolicy }}
-              restartPolicy: {{ . }}
               {{- end }}
           {{- with .Values.volumes }}
           volumes:
