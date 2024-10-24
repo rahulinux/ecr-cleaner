@@ -4,7 +4,7 @@
 
 The ECR Image Cleanup Tool addresses limitations in Amazon ECR's built-in lifecycle policies, particularly for multi-architecture images. It helps prevent repositories from hitting the 10,000 image hard limit imposed by ECR by providing more flexible and architecture-aware cleanup options.
 
-![Version: 0.1.10](https://img.shields.io/badge/Version-0.1.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.10](https://img.shields.io/badge/AppVersion-0.1.10-informational?style=flat-square)
+![Version: 0.1.11](https://img.shields.io/badge/Version-0.1.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.11](https://img.shields.io/badge/AppVersion-0.1.11-informational?style=flat-square)
 
 ## Features
 
