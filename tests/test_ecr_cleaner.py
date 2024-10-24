@@ -1,18 +1,24 @@
-import platform
 import argparse
-import json
-import unittest
-from unittest import mock
 import boto3
+import hashlib
+import json
+import pytz
+import random
+import unittest
+import uuid
+from freezegun import freeze_time
 from moto import mock_aws
-from ecr_cleaner import Repository
-from ecr_cleaner_cli import parse_args, RepositoryConfig
+from unittest import mock
 
-py_version = platform.python_version().replace(".", "-")
+from ecr_cleaner import Repository
+from ecr_cleaner.helpers import config_logger
+from ecr_cleaner_cli import RepositoryConfig, parse_args
+
+config_logger("DEBUG")
 
 
 class TestECRCleaner(unittest.TestCase):
-    REPOSITORY_NAME = f"test-image-{py_version}"
+    REPOSITORY_NAME = f"test-image-{uuid.uuid4()}"
     REGION = "us-east-1"
     BATCH_SIZE = 1
 
@@ -26,85 +32,124 @@ class TestECRCleaner(unittest.TestCase):
 
         self._populate_repository()
 
+    def _create_image_digest(self):
+        contents = str(random.SystemRandom().randint(0, 10**6))
+        return "sha256:%s" % hashlib.sha256(contents.encode("utf-8")).hexdigest()
+
+    def _put_images(self, images):
+        for image in images:
+            image_tags = image.get("imageTags", [])
+            image_digest = self._create_image_digest()
+            data = {
+                "repositoryName": self.REPOSITORY_NAME,
+                "imageManifest": json.dumps(image),
+                "imageTag": image_tags[0] if image_tags else None,
+                "imageDigest": image_digest,
+            }
+            if not image_tags:
+                del data["imageTag"]
+
+            if "imagePushedAt" in image:
+                with freeze_time(image["imagePushedAt"]):
+                    self.ecr_client.put_image(**data)
+            else:
+                self.ecr_client.put_image(**data)
+
     def _populate_repository(self):
         """Populate the mock ECR repository with images."""
         common_image_manifest = {
             "schemaVersion": 2,
             "mock": "manifest",
             "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+            "repositoryName": self.REPOSITORY_NAME,
         }
 
-        image_details = [
-            {"imageTags": ["latest"]},
-            {"imageTags": ["stable"]},
-            {
-                "imageTags": [],
-                "imageDigest": "sha256:4fc82b26aecb47d2868c4efbe3581732a3e7cbcc6c2efb32062c08170a05eeb8",
-            },
-            {
-                "imageTags": [],
-                "imageDigest": "sha256:73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049",
-            },
-            {"imageTags": []},
-        ]
+        with open("tests/images.json") as f:
+            image_details = json.load(f)
 
-        for image in image_details:
-            manifest = {**common_image_manifest, **image}
-            image_tags = image.get("imageTags", [])
-            image_digest = image.get("imageDigest", "")
-
-            if image_tags:
-                self.ecr_client.put_image(
-                    repositoryName=self.REPOSITORY_NAME,
-                    imageManifest=json.dumps(manifest),
-                    imageTag=image_tags[0],
-                    imageDigest=image_digest,
-                )
-            else:
-                self.ecr_client.put_image(
-                    repositoryName=self.REPOSITORY_NAME,
-                    imageManifest=json.dumps(manifest),
-                    imageDigest=image_digest,
-                )
+        images = [{**common_image_manifest, **image} for image in image_details]
+        self._put_images(images)
 
     def test_ecr_cleaner_management(self):
         """Test the ECR Cleaner functionality."""
-        policy = {"latest": 1, "untagged": 2}
+        images = self.ecr_client.describe_images(repositoryName=self.REPOSITORY_NAME)
+
+        total_images = len(images["imageDetails"])
+
+        policy = {
+            "beta": 2,  # total 4
+            "untagged": 2,  # total 5
+            "latest": 1,  # total 1
+        }
         repo = Repository(
             name=self.REPOSITORY_NAME, batch_size=self.BATCH_SIZE, region=self.REGION
         )
 
+        # Apply dry run to ensure no images are deleted
+        repo.manage_images(policy=policy, dry_run=True)
+        self.assertEqual(len(images["imageDetails"]), total_images)
+
+        # Apply policy to delete images
         repo.manage_images(policy=policy, dry_run=False)
 
-        images = self.ecr_client.describe_images(repositoryName=self.REPOSITORY_NAME)
-
-        # Check expected number of images after management
-        expected_image_count = (
-            4  # 1 latest + 1 stable + 3 untagged - 1 deleted untagged
+        images_with_applied_policy = self.ecr_client.describe_images(
+            repositoryName=self.REPOSITORY_NAME
         )
-        self.assertEqual(len(images["imageDetails"]), expected_image_count)
+
+        # Calculate expected remaining images
+        expected_remaining_images = (
+            policy["beta"] + policy["untagged"] + policy["latest"]
+        )
+
+        self.assertEqual(
+            expected_remaining_images,
+            len(images_with_applied_policy["imageDetails"]),
+            "The repository does not have the expected number of images after management.",
+        )
 
         latest_images = [
             img
-            for img in images["imageDetails"]
+            for img in images_with_applied_policy["imageDetails"]
             if "latest" in img.get("imageTags", [])
         ]
         self.assertEqual(
             len(latest_images), policy["latest"], "Latest image count mismatch."
         )
 
-        stable_images = [
-            img
-            for img in images["imageDetails"]
-            if "stable" in img.get("imageTags", [])
-        ]
-        self.assertEqual(len(stable_images), 1, "Stable image count mismatch.")
+        untagged_images = len(
+            [
+                img
+                for img in images_with_applied_policy["imageDetails"]
+                if not img.get("imageTags")
+            ]
+        )
 
-        untagged_images = [
-            img for img in images["imageDetails"] if not img.get("imageTags")
-        ]
         self.assertEqual(
-            len(untagged_images), policy["untagged"], "Untagged image count mismatch."
+            policy["untagged"], untagged_images, "Untagged image count mismatch."
+        )
+
+        untagged_image_dates_before = [
+            image.get("imagePushedAt")
+            for image in images["imageDetails"]
+            if "imageTags" not in image
+        ]
+        untagged_image_dates_before.sort(
+            key=lambda x: x.astimezone(pytz.UTC), reverse=True
+        )
+
+        untagged_image_dates_after = [
+            image.get("imagePushedAt")
+            for image in images_with_applied_policy["imageDetails"]
+            if "imageTags" not in image
+        ]
+        untagged_image_dates_after.sort(
+            key=lambda x: x.astimezone(pytz.UTC), reverse=True
+        )
+
+        self.assertEqual(
+            untagged_image_dates_before[: policy.get("untagged")],
+            untagged_image_dates_after,
+            "Images are not deleted by date in ascending order.",
         )
 
     @mock.patch(

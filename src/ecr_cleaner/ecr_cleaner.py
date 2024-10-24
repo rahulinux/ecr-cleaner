@@ -155,7 +155,7 @@ class Repository:
         total_tagged_images = len(tagged_images[tag])
         delete_count = max(0, total_tagged_images - keep_count)
 
-        if delete_count == 0:
+        if delete_count <= 0:
             log.warn("Invalid policy, Skipping tag", tag=tag, repository=self.name)
             log.warn(
                 "Keep most recent count should be greater than 0",
@@ -163,20 +163,19 @@ class Repository:
                 repository=self.name,
                 keep_count=keep_count,
             )
-            return
+        else:
+            images_to_delete = tagged_images[tag][-delete_count:]
 
-        images_to_delete = tagged_images[tag][-delete_count:]
+            log.info(
+                "Total images to delete with tag",
+                tag=tag,
+                delete_count=delete_count,
+                repository=self.name,
+                keep_count=keep_count,
+                total=total_tagged_images,
+            )
 
-        log.info(
-            "Total images to delete with tag",
-            tag=tag,
-            delete_count=delete_count,
-            repository=self.name,
-            keep_count=keep_count,
-            total=total_tagged_images,
-        )
-
-        self._delete_images(images_to_delete, dry_run)
+            self._delete_images(images_to_delete, dry_run)
 
     def _manage_untagged_images(
         self, keep_count: int, untagged_images: List[ImageDetail], dry_run: bool
@@ -219,14 +218,13 @@ class Repository:
                 )
             else:
                 try:
-                    response = self.ecr_client.batch_delete_image(
+                    self.ecr_client.batch_delete_image(
                         repositoryName=self.name,
                         imageIds=image_ids,
                     )
-                    deleted_image_ids = response.get("imageIds", [])
                     log.info(
-                        f"Deleted {len(deleted_image_ids)} images.",
-                        deleted_image_ids=deleted_image_ids,
+                        f"Deleted {len(image_ids)} images.",
+                        deleted_image_ids=image_ids,
                     )
                 except ClientError as e:
                     log.error(f"Failed to delete images: {e}")
