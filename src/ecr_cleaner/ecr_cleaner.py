@@ -219,14 +219,13 @@ class Repository:
                 )
             else:
                 try:
-                    response = self.ecr_client.batch_delete_image(
+                    self.ecr_client.batch_delete_image(
                         repositoryName=self.name,
                         imageIds=image_ids,
                     )
-                    deleted_image_ids = response.get("imageIds", [])
                     log.info(
-                        f"Deleted {len(deleted_image_ids)} images.",
-                        deleted_image_ids=deleted_image_ids,
+                        f"Deleted {len(image_ids)} images.",
+                        deleted_image_ids=image_ids,
                     )
                 except ClientError as e:
                     log.error(f"Failed to delete images: {e}")
