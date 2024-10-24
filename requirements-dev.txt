@@ -2,6 +2,7 @@
 # keep-sorted start
 boto3==1.35.44
 build==1.2.2
+freezegun==1.5.1
 mock==5.1.0
 moto==5.0.17
 mypy-boto3-ecr==1.35.21
