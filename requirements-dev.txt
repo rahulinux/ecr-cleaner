@@ -1,6 +1,6 @@
 # DEV requirements
 # keep-sorted start
-boto3==1.35.44
+boto3==1.35.51
 build==1.2.2
 freezegun==1.5.1
 mock==5.1.0
