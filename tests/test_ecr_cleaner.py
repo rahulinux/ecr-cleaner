@@ -76,6 +76,15 @@ class TestECRCleaner(unittest.TestCase):
 
         total_images = len(images["imageDetails"])
 
+        other_images = len(
+            [
+                img
+                for img in images["imageDetails"]
+                for tag in img.get("imageTags", [])
+                if tag.startswith("other-")
+            ]
+        )
+
         policy = {
             "beta": 2,  # total 4
             "untagged": 2,  # total 5
@@ -98,7 +107,7 @@ class TestECRCleaner(unittest.TestCase):
 
         # Calculate expected remaining images
         expected_remaining_images = (
-            policy["beta"] + policy["untagged"] + policy["latest"]
+            policy["beta"] + policy["untagged"] + policy["latest"] + other_images
         )
 
         self.assertEqual(
@@ -110,22 +119,23 @@ class TestECRCleaner(unittest.TestCase):
         latest_images = [
             img
             for img in images_with_applied_policy["imageDetails"]
-            if "latest" in img.get("imageTags", [])
+            for tag in img.get("imageTags", [])
+            if tag.startswith("latest")
         ]
         self.assertEqual(
             len(latest_images), policy["latest"], "Latest image count mismatch."
         )
 
-        untagged_images = len(
-            [
-                img
-                for img in images_with_applied_policy["imageDetails"]
-                if not img.get("imageTags")
-            ]
-        )
+        untagged_images_after = [
+            img
+            for img in images_with_applied_policy["imageDetails"]
+            if not img.get("imageTags")
+        ]
 
         self.assertEqual(
-            policy["untagged"], untagged_images, "Untagged image count mismatch."
+            policy["untagged"],
+            len(untagged_images_after),
+            "Untagged image count mismatch.",
         )
 
         untagged_image_dates_before = [
