@@ -6,7 +6,7 @@ freezegun==1.5.1
 mock==5.1.0
 moto==5.0.17
 mypy-boto3-ecr==1.35.21
-pre-commit==3.8.0
+pre-commit==4.0.1
 pytest==8.3.3
 pytz==2024.2
 structlog==24.4.0
