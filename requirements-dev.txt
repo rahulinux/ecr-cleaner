@@ -13,5 +13,5 @@ structlog==24.4.0
 toml==0.10.2
 twine==6.0.1
 wheel-inspect==1.7.1
-wheel==0.44.0
+wheel==0.45.1
 # keep-sorted end
