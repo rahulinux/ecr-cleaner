@@ -1,5 +1,5 @@
 # CLI requirements
 # keep-sorted start
 PyYAML==6.0.2
-types-PyYAML==6.0.12.20240917
+types-PyYAML==6.0.12.20241230
 # keep-sorted end
