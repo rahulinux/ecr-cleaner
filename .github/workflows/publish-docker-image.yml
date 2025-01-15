@@ -111,14 +111,14 @@ jobs:
         artifact-name: sbom_docker_${{ env.REPO_NAME }}_${{ env.VERSION }}.spdx.json
 
     - name: Generate artifact attestation for GitHub Container Registry
-      uses: actions/attest-build-provenance@v1
+      uses: actions/attest-build-provenance@v2
       with:
         subject-name: ghcr.io/${{ env.OWNER_REPO }}
         subject-digest: ${{ steps.build.outputs.digest }}
         push-to-registry: true
 
     - name: Generate artifact attestation for Docker Hub
-      uses: actions/attest-build-provenance@v1
+      uses: actions/attest-build-provenance@v2
       with:
         subject-name: docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}
         subject-digest: ${{ steps.build.outputs.digest }}
