@@ -11,7 +11,7 @@ pytest==8.3.3
 pytz==2024.2
 structlog==24.4.0
 toml==0.10.2
-twine==5.1.1
+twine==6.0.1
 wheel-inspect==1.7.1
 wheel==0.44.0
 # keep-sorted end
